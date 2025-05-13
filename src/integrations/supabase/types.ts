@@ -9,13 +9,193 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      chapters: {
+        Row: {
+          course_id: number
+          created_at: string
+          description: string | null
+          id: number
+          order_in_course: number
+          title: string
+          updated_at: string
+          video_storage_path: string
+        }
+        Insert: {
+          course_id: number
+          created_at?: string
+          description?: string | null
+          id?: number
+          order_in_course?: number
+          title: string
+          updated_at?: string
+          video_storage_path: string
+        }
+        Update: {
+          course_id?: number
+          created_at?: string
+          description?: string | null
+          id?: number
+          order_in_course?: number
+          title?: string
+          updated_at?: string
+          video_storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          created_at: string
+          created_by_admin_id: string | null
+          description: string | null
+          id: number
+          keywords: string | null
+          subject_id: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_admin_id?: string | null
+          description?: string | null
+          id?: number
+          keywords?: string | null
+          subject_id: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_admin_id?: string | null
+          description?: string | null
+          id?: number
+          keywords?: string | null
+          subject_id?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          access_expiry_date: string
+          college: string | null
+          created_at: string
+          grade_year: string | null
+          id: string
+          major: string | null
+          phone_number: string
+          school: string | null
+          updated_at: string
+          user_type: string
+          username: string
+        }
+        Insert: {
+          access_expiry_date: string
+          college?: string | null
+          created_at?: string
+          grade_year?: string | null
+          id: string
+          major?: string | null
+          phone_number: string
+          school?: string | null
+          updated_at?: string
+          user_type?: string
+          username: string
+        }
+        Update: {
+          access_expiry_date?: string
+          college?: string | null
+          created_at?: string
+          grade_year?: string | null
+          id?: string
+          major?: string | null
+          phone_number?: string
+          school?: string | null
+          updated_at?: string
+          user_type?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_chapter_progress: {
+        Row: {
+          chapter_id: number
+          user_id: string
+          watched_at: string
+        }
+        Insert: {
+          chapter_id: number
+          user_id: string
+          watched_at?: string
+        }
+        Update: {
+          chapter_id?: number
+          user_id?: string
+          watched_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_chapter_progress_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_valid_access: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
