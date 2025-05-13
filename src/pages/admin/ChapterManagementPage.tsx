@@ -124,7 +124,10 @@ const ChapterManagementPage: React.FC = () => {
       }
       
       // Get total count first - FIX: Use correct count syntax
-      const { count, error: countError } = await query.select('*', { count: 'exact', head: true });
+      const { count, error: countError } = await supabase
+        .from('chapters')
+        .select('*', { count: 'exact' })
+        .eq('course_id', parseInt(courseId));
       
       if (countError) throw countError;
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
