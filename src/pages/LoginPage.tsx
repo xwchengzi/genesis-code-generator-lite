@@ -67,6 +67,9 @@ const LoginPage: React.FC = () => {
                 立即注册
               </Link>
             </div>
+            <CardFooter className="flex justify-center mt-6 text-xs text-gray-500">
+              Copyright © 杭州劲风教育科技有限公司
+            </CardFooter>
           </CardFooter>
         </form>
       </Card>
