@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -118,7 +117,7 @@ const CourseManagementPage: React.FC = () => {
         .order('title');
       
       if (subjectFilter !== 'all') {
-        query = query.eq('subject_id', subjectFilter);
+        query = query.eq('subject_id', parseInt(subjectFilter));
       }
       
       if (searchTerm) {
@@ -126,7 +125,7 @@ const CourseManagementPage: React.FC = () => {
       }
       
       // Get total count first
-      const { count } = await query.select('id', { count: 'exact', head: true });
+      const { count } = await query.select('id', { count: 'exact' });
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
       
       // Then get paginated results
@@ -302,6 +301,40 @@ const CourseManagementPage: React.FC = () => {
     setIsDeleteDialogOpen(true);
   };
 
+  // Fix the Pagination rendering
+  const renderPagination = () => {
+    return (
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+          
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink
+                onClick={() => setCurrentPage(page)}
+                isActive={page === currentPage}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          
+          <PaginationItem>
+            <PaginationNext 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -404,34 +437,7 @@ const CourseManagementPage: React.FC = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="px-4 py-2 border-t">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    />
-                  </PaginationItem>
-                  
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(page)}
-                        isActive={page === currentPage}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+              {renderPagination()}
             </div>
           )}
         </div>

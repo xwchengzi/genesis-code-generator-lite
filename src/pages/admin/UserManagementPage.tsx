@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/types';
@@ -99,7 +98,7 @@ const UserManagementPage: React.FC = () => {
       }
       
       // Get total count first
-      const { count } = await query.select('id', { count: 'exact', head: true });
+      const { count } = await query.select('id', { count: 'exact' });
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
       
       // Then get paginated results
@@ -111,7 +110,13 @@ const UserManagementPage: React.FC = () => {
       
       if (error) throw error;
       
-      setUsers(data || []);
+      // Cast user_type to proper type
+      const typedData = data?.map(user => ({
+        ...user,
+        user_type: user.user_type as 'user' | 'admin'
+      }));
+      
+      setUsers(typedData || []);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -122,6 +127,40 @@ const UserManagementPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Fix the Pagination rendering
+  const renderPagination = () => {
+    return (
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+          
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink
+                onClick={() => setCurrentPage(page)}
+                isActive={page === currentPage}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          
+          <PaginationItem>
+            <PaginationNext 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -438,7 +477,7 @@ const UserManagementPage: React.FC = () => {
                   <PaginationItem>
                     <PaginationPrevious 
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                     />
                   </PaginationItem>
                   
@@ -456,7 +495,7 @@ const UserManagementPage: React.FC = () => {
                   <PaginationItem>
                     <PaginationNext 
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                     />
                   </PaginationItem>
                 </PaginationContent>

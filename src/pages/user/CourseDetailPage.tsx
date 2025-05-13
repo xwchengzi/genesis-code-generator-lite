@@ -28,7 +28,7 @@ const CourseDetailPage: React.FC = () => {
         const { data: courseData, error: courseError } = await supabase
           .from('courses')
           .select('*')
-          .eq('id', id)
+          .eq('id', parseInt(id)) // Convert string to number
           .single();
         
         if (courseError) throw courseError;
@@ -38,7 +38,7 @@ const CourseDetailPage: React.FC = () => {
         const { data: chaptersData, error: chaptersError } = await supabase
           .from('chapters')
           .select('*')
-          .eq('course_id', id)
+          .eq('course_id', parseInt(id)) // Convert string to number
           .order('order_in_course');
         
         if (chaptersError) throw chaptersError;

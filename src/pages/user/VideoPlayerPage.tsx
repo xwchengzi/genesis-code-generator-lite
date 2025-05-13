@@ -65,7 +65,7 @@ const VideoPlayerPage: React.FC = () => {
         const { data: chapterData, error: chapterError } = await supabase
           .from('chapters')
           .select('*')
-          .eq('id', chapterId)
+          .eq('id', parseInt(chapterId)) // Convert string to number
           .single();
         
         if (chapterError) throw chapterError;
@@ -75,7 +75,7 @@ const VideoPlayerPage: React.FC = () => {
         const { data: courseData, error: courseError } = await supabase
           .from('courses')
           .select('*')
-          .eq('id', courseId)
+          .eq('id', parseInt(courseId)) // Convert string to number
           .single();
         
         if (courseError) throw courseError;
@@ -85,7 +85,7 @@ const VideoPlayerPage: React.FC = () => {
         const { data: chaptersData, error: chaptersError } = await supabase
           .from('chapters')
           .select('*')
-          .eq('course_id', courseId)
+          .eq('course_id', parseInt(courseId)) // Convert string to number
           .order('order_in_course');
         
         if (chaptersError) throw chaptersError;
