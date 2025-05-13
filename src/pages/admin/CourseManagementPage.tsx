@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -124,8 +125,10 @@ const CourseManagementPage: React.FC = () => {
         query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,keywords.ilike.%${searchTerm}%`);
       }
       
-      // Get total count first
-      const { count } = await query.select('id', { count: 'exact' });
+      // Get total count first - FIX: Use correct count syntax
+      const { count, error: countError } = await query.select('*', { count: 'exact', head: true });
+      
+      if (countError) throw countError;
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
       
       // Then get paginated results
